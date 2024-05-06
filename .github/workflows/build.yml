@@ -1,0 +1,27 @@
+name: Build the app and package JAR
+run-name: Build for commit "${{ github.event.head_commit.message }}" by ${{ github.actor }}
+on:
+  push:
+    branches:
+      - 'main'
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    name: Build the app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '21'
+          cache: 'maven'
+          architecture: 'x64'
+      - name: Build the app
+        run: mvn verify
+      - name: Copy JAR files to staging
+        run: mkdir staging && cp target/*.jar staging
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JAR file
+          path: staging
