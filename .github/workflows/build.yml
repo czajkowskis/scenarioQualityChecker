@@ -1,9 +1,19 @@
 name: Build the app and package JAR
-run-name: Build for commit "${{ github.event.head_commit.message }}" by ${{ github.actor }}
+run-name: >
+  ${{ startsWith(github.ref, 'refs/tags/v') &&
+  format('Release {0}', github.ref_name) ||
+  format('Build for commit "{0}"', github.event.head_commit.message) }}
+  by ${{ github.actor }}
 on:
   push:
     branches:
       - 'main'
+    paths-ignore:
+      - .gitignore
+      - LICENSE
+      - README.md
+    tags:
+      - 'v*'
 jobs:
   compile:
     runs-on: ubuntu-latest
@@ -19,9 +29,8 @@ jobs:
           architecture: 'x64'
       - name: Build the app
         run: mvn verify
-      - name: Copy JAR files to staging
-        run: mkdir staging && cp target/*.jar staging
-      - uses: actions/upload-artifact@v4
+      - name: Create a release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v')
         with:
-          name: JAR file
-          path: staging
+          files: target/*.jar
