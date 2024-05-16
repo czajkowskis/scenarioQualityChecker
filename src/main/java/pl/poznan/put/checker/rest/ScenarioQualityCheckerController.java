@@ -13,10 +13,10 @@ public class ScenarioQualityCheckerController {
     private static final Logger logger = LoggerFactory.getLogger(ScenarioQualityCheckerController.class);
 
     @PostMapping(path = "echo", produces = "application/json")
-    public Scenario echo(@RequestBody Scenario body) {
-        logger.info("Received echo request: {}", body);
+    public Scenario echo(@RequestBody Scenario scenario) {
+        logger.info("Received echo request: {}", scenario);
 
-        return body;
+        return scenario;
     }
 
     @PostMapping(path = "count-steps", produces = "application/json")
