@@ -25,9 +25,6 @@ public record Scenario(String title, List<String> externalActors, List<String> i
         if(steps == null) {
             throw new IllegalArgumentException("Steps cannot be null");
         }
-        if(steps.isEmpty()) {
-            throw new IllegalArgumentException("Steps cannot be empty");
-        }
     }
 
     public void accept(Visitor visitor) {
