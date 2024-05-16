@@ -22,17 +22,21 @@ public class StepSyntaxVisitor implements Visitor{
         }
 
         if(stepText.startsWith("IF:") || stepText.startsWith("ELSE:")){
-            String secondWord = stepText.split(" ")[1];
-            for(String actor : externalActors){
-                if(secondWord.equals(actor)){
-                    return true;
+            String[] words = stepText.split(" ");
+            if(words.length > 1){
+                String secondWord = words[1];
+                for(String actor : externalActors){
+                    if(secondWord.equals(actor)){
+                        return true;
+                    }
+                }
+                for(String actor : internalActors){
+                    if(secondWord.equals(actor)){
+                        return true;
+                    }
                 }
             }
-            for(String actor : internalActors){
-                if(secondWord.equals(actor)){
-                    return true;
-                }
-            }
+            return false;
         }
         for(String actor : externalActors){
             if(stepText.startsWith(actor)){
@@ -44,7 +48,7 @@ public class StepSyntaxVisitor implements Visitor{
                 return true;
             }
         }
-    return false;
+        return false;
     }
 
     @Override
