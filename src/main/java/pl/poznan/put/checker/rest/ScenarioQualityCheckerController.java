@@ -4,8 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import pl.poznan.put.checker.logic.Scenario;
+import pl.poznan.put.checker.logic.Step;
+import pl.poznan.put.checker.logic.visitors.ActorCheckingVisitor;
 import pl.poznan.put.checker.logic.visitors.CountAllStepsVisitor;
 import pl.poznan.put.checker.logic.visitors.CountKeywordStepsVisitor;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/")
@@ -21,23 +25,34 @@ public class ScenarioQualityCheckerController {
     }
 
     @PostMapping(path = "count-steps", produces = "application/json")
-    public IntegerResponse countAllSteps(@RequestBody Scenario scenario) {
+    public Response<Integer> countAllSteps(@RequestBody Scenario scenario) {
         logger.info("Received count-steps request: {}", scenario);
         CountAllStepsVisitor visitor = new CountAllStepsVisitor();
         visitor.visit(scenario);
-        IntegerResponse response = new IntegerResponse("step-count", visitor.getNumberOfSteps());
+        Response<Integer> response = new Response<>("step-count", visitor.getNumberOfSteps());
         logger.info("Sending count-steps response: {}", response);
         return response;
     }
 
 
     @PostMapping(path = "count-keywords", produces = "application/json")
-    public IntegerResponse countKeywordSteps(@RequestBody Scenario scenario) {
+    public Response<Integer> countKeywordSteps(@RequestBody Scenario scenario) {
         logger.info("Received count-keywords request: {}", scenario);
         CountKeywordStepsVisitor visitor = new CountKeywordStepsVisitor();
         visitor.visit(scenario);
-        IntegerResponse response = new IntegerResponse("keyword-count", visitor.getNumberOfSteps());
+        Response<Integer> response = new Response<>("keyword-count", visitor.getNumberOfSteps());
         logger.info("Sending count-keywords response: {}", response);
+        return response;
+    }
+
+
+    @PostMapping(path = "check-actors", produces = "application/json")
+    public Response<List<Step>> checkActors(@RequestBody Scenario scenario) {
+        logger.info("Received check-actors request: {}", scenario);
+        ActorCheckingVisitor visitor = new ActorCheckingVisitor(scenario.externalActors(), scenario.internalActors());
+        visitor.visit(scenario);
+        Response<List<Step>> response = new Response<>("keyword-count", visitor.getStepsWithoutActor());
+        logger.info("Sending check-actors response: {}", response);
         return response;
     }
 }
