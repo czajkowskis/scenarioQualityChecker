@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import pl.poznan.put.checker.logic.Scenario;
 import pl.poznan.put.checker.logic.visitors.CountAllStepsVisitor;
+import pl.poznan.put.checker.logic.visitors.CountKeywordStepsVisitor;
 
 @RestController
 @RequestMapping("/")
@@ -26,6 +27,17 @@ public class ScenarioQualityCheckerController {
         visitor.visit(scenario);
         IntegerResponse response = new IntegerResponse("step-count", visitor.getNumberOfSteps());
         logger.info("Sending count-steps response: {}", response);
+        return response;
+    }
+
+
+    @PostMapping(path = "count-keywords", produces = "application/json")
+    public IntegerResponse countKeywordSteps(@RequestBody Scenario scenario) {
+        logger.info("Received count-keywords request: {}", scenario);
+        CountKeywordStepsVisitor visitor = new CountKeywordStepsVisitor();
+        visitor.visit(scenario);
+        IntegerResponse response = new IntegerResponse("keyword-count", visitor.getNumberOfSteps());
+        logger.info("Sending count-keywords response: {}", response);
         return response;
     }
 }
