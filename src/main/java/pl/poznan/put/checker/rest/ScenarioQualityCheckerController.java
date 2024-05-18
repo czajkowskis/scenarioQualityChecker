@@ -57,10 +57,10 @@ public class ScenarioQualityCheckerController {
         return response;
     }
 
-    @PostMapping(path = "filter-scenario/{maxLevel}", produces = "application/json")
-    public Response<Scenario> filterScenario(@RequestBody Scenario scenario, @PathVariable int maxLevel) {
+    @PostMapping(path = "filter-scenario", produces = "application/json")
+    public Response<Scenario> filterScenario(@RequestBody Scenario scenario, @RequestParam int maxLevel) {
         logger.info("Received filter-scenario request: {}", scenario);
-        ScenarioFilterVisitor visitor = new ScenarioFilterVisitor(maxLevel, 0);
+        ScenarioFilterVisitor visitor = new ScenarioFilterVisitor(maxLevel);
         visitor.visit(scenario);
         Response<Scenario> filteredScenario = new Response<>("filter-scenario", new Scenario(scenario.title(), scenario.externalActors(), scenario.internalActors(), visitor.getIncludedSteps()));
         logger.info("Sending filter-scenario response: {}", filteredScenario);
