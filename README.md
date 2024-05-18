@@ -33,7 +33,7 @@ __System actor__: System
 - Librarian confirms book addition. 
 - System informs about the correct addition of the book.
 
-## Project menagement
+## Project management
 The project is managed using trello. It is a private board available only to the group and the teacher.
 
 [Project Trello](https://trello.com/b/CqRI8VDn/scenarioqualitychecker)
