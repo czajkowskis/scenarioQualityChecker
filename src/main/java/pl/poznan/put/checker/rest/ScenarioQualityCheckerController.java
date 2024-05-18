@@ -8,6 +8,7 @@ import pl.poznan.put.checker.logic.Step;
 import pl.poznan.put.checker.logic.visitors.ActorCheckingVisitor;
 import pl.poznan.put.checker.logic.visitors.CountAllStepsVisitor;
 import pl.poznan.put.checker.logic.visitors.CountKeywordStepsVisitor;
+import pl.poznan.put.checker.logic.visitors.ScenarioFilterVisitor;
 
 import java.util.List;
 
@@ -51,8 +52,18 @@ public class ScenarioQualityCheckerController {
         logger.info("Received check-actors request: {}", scenario);
         ActorCheckingVisitor visitor = new ActorCheckingVisitor(scenario.externalActors(), scenario.internalActors());
         visitor.visit(scenario);
-        Response<List<Step>> response = new Response<>("keyword-count", visitor.getStepsWithoutActor());
+        Response<List<Step>> response = new Response<>("check-actors", visitor.getStepsWithoutActor());
         logger.info("Sending check-actors response: {}", response);
         return response;
+    }
+
+    @PostMapping(path = "filter-scenario", produces = "application/json")
+    public Response<Scenario> filterScenario(@RequestBody Scenario scenario, @RequestParam int maxLevel) {
+        logger.info("Received filter-scenario request: {}", scenario);
+        ScenarioFilterVisitor visitor = new ScenarioFilterVisitor(maxLevel);
+        visitor.visit(scenario);
+        Response<Scenario> filteredScenario = new Response<>("filter-scenario", new Scenario(scenario.title(), scenario.externalActors(), scenario.internalActors(), visitor.getIncludedSteps()));
+        logger.info("Sending filter-scenario response: {}", filteredScenario);
+        return filteredScenario;
     }
 }
