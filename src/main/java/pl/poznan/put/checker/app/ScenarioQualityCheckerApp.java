@@ -6,7 +6,9 @@ import pl.poznan.put.checker.rest.ScenarioQualityCheckerController;
 
 import java.util.Map;
 
-
+/***
+ * Entry point of the application
+ */
 @SpringBootApplication(scanBasePackageClasses = {ScenarioQualityCheckerController.class})
 public class ScenarioQualityCheckerApp {
     public static void main(String[] args) {

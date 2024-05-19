@@ -12,12 +12,20 @@ import pl.poznan.put.checker.logic.visitors.ScenarioFilterVisitor;
 
 import java.util.List;
 
+/***
+ * Rest API endpoints
+ */
 @RestController
 @RequestMapping("/")
 public class ScenarioQualityCheckerController {
 
     private static final Logger logger = LoggerFactory.getLogger(ScenarioQualityCheckerController.class);
 
+    /***
+     * Endpoint that validates and echoes back scenario send in POST
+     * @param scenario Scenario converted from the body of the request
+     * @return The same scenario that was received
+     */
     @PostMapping(path = "echo", produces = "application/json")
     public Scenario echo(@RequestBody Scenario scenario) {
         logger.info("Received echo request: {}", scenario);
@@ -25,6 +33,11 @@ public class ScenarioQualityCheckerController {
         return scenario;
     }
 
+    /***
+     * Endpoint that counts the number of steps in the received scenario
+     * @param scenario Scenario converted from the body of the request
+     * @return Response containing number of steps
+     */
     @PostMapping(path = "count-steps", produces = "application/json")
     public Response<Integer> countAllSteps(@RequestBody Scenario scenario) {
         logger.info("Received count-steps request: {}", scenario);
@@ -36,6 +49,11 @@ public class ScenarioQualityCheckerController {
     }
 
 
+    /***
+     * Endpoint that counts the number of steps in the received scenario that contain a keyword
+     * @param scenario Scenario converted from the body of the request
+     * @return Response containing number of steps that contain a keyword
+     */
     @PostMapping(path = "count-keywords", produces = "application/json")
     public Response<Integer> countKeywordSteps(@RequestBody Scenario scenario) {
         logger.info("Received count-keywords request: {}", scenario);
@@ -47,6 +65,11 @@ public class ScenarioQualityCheckerController {
     }
 
 
+    /***
+     * Endpoint that lists steps that don't contain a valid actor
+     * @param scenario Scenario converted from the body of the request
+     * @return Response containing list of steps that don't contain a valid actor
+     */
     @PostMapping(path = "check-actors", produces = "application/json")
     public Response<List<Step>> checkActors(@RequestBody Scenario scenario) {
         logger.info("Received check-actors request: {}", scenario);
@@ -57,6 +80,11 @@ public class ScenarioQualityCheckerController {
         return response;
     }
 
+    /***
+     * Endpoint filters a scenario to a given depth
+     * @param scenario Scenario converted from the body of the request
+     * @return Response containing a filtered scenario
+     */
     @PostMapping(path = "filter-scenario", produces = "application/json")
     public Response<Scenario> filterScenario(@RequestBody Scenario scenario, @RequestParam int maxLevel) {
         logger.info("Received filter-scenario request: {}", scenario);
