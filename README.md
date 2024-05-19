@@ -4,6 +4,8 @@ Scenario quality checker is being created as a part of Software Engineering cour
 
 It is a program that will provide quantitative information and enable detection of problems in functional requirements written in the form of scenarios. The application will be available via GUI and also as a remote API, thanks to which it can be integrated with existing tools.
 
+Working API is available under this address: **[ancient-pipe-397119.lm.r.appspot.com](https://ancient-pipe-397119.lm.r.appspot.com])**
+
 ## Information about scenario format:
 
 - The scenario includes a header specifying its title and actors (external and system)
@@ -37,3 +39,4 @@ __System actor__: System
 The project is managed using trello. It is a private board available only to the group and the teacher.
 
 [Project Trello](https://trello.com/b/CqRI8VDn/scenarioqualitychecker)
+
