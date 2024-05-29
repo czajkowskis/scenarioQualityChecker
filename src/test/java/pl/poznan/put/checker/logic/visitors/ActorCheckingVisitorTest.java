@@ -137,6 +137,182 @@ class ActorCheckingVisitorTest {
 
     }
 
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Case: 1 error, no KEYWORDS, 0 external actors, 1 internal actor
+     * The expected list of wrong steps has one step.
+     */
+    @Test
+    public void visitScenarioTest5(){
+
+        internalActors.add("intActor1");
+        for(int i=0; i<5; i++){
+            listOfSubsteps.add(new Step(("intActor1 substep" + i + "for testing"), null));
+        }
+        listOfSubsteps.add(new Step(("wrongActor error step"), null));
+        listOfSteps.add(new Step("intActor1 main step", listOfSubsteps));
+        actorCheckingVisitor.visit(scenario);
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+        expectedListOfWrongSteps.add(new Step("wrongActor error step", null));
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+
+
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Case: 1 error, WITH KEYWORDS, 0 external actors, 1 internal actor
+     * The expected list of wrong steps has one step.
+     */
+    @Test
+    public void visitScenarioTest6(){
+
+        internalActors.add("intActor1");
+        listOfSubsteps.add(new Step(("IF: intActor1 substep 1 for testing"), null));
+        listOfSubsteps.add(new Step(("intActor1 substep 2 for testing"), null));
+        listOfSubsteps.add(new Step(("FOR EACH: substep 3 for testing"), null));
+        listOfSubsteps.add(new Step(("IF: wrongActor error step"), null));
+
+        listOfSteps.add(new Step("intActor1 main step", listOfSubsteps));
+        actorCheckingVisitor.visit(scenario);
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+        expectedListOfWrongSteps.add(new Step(("IF: wrongActor error step"), null));
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Case: 1 error, no KEYWORDS, 1 external actors, 1 internal actor
+     * The expected list of wrong steps has one step.
+     */
+    @Test
+    public void visitScenarioTest7(){
+
+        internalActors.add("intActor1");
+        externalActors.add("extActor1");
+        for(int i=0; i<3; i++){
+            listOfSubsteps.add(new Step(("intActor1 substep" + i + "for testing"), null));
+        }
+        for(int i=0; i<3; i++){
+            listOfSubsteps.add(new Step(("extActor1 substep" + i + "for testing"), null));
+        }
+        listOfSubsteps.add(new Step(("wrongActor error step"), null));
+
+        listOfSteps.add(new Step("intActor1 main step", listOfSubsteps));
+        actorCheckingVisitor.visit(scenario);
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+        expectedListOfWrongSteps.add(new Step(("wrongActor error step"), null));
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+
+
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Case: 1 error, WITH KEYWORDS, 1 external actors, 1 internal actor
+     * The expected list of wrong steps has one step.
+     */
+    @Test
+    public void visitScenarioTest8(){
+
+        internalActors.add("intActor1");
+        externalActors.add("extActor1");
+
+        listOfSubsteps.add(new Step(("IF: intActor1 substep 1 for testing"), null));
+        listOfSubsteps.add(new Step(("FOR EACH: substep 2 for testing"), null));
+        listOfSubsteps.add(new Step(("ELSE: intActor1 substep 3 for testing"), null));
+        listOfSubsteps.add(new Step(("IF: wrongActor error step"), null));
+
+        listOfSteps.add(new Step("extActor1 main step", listOfSubsteps));
+        actorCheckingVisitor.visit(scenario);
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+        expectedListOfWrongSteps.add(new Step(("IF: wrongActor error step"), null));
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Case: 5 errors, no KEYWORDS, 1 external actors, 1 internal actor
+     * The expected list of wrong steps has five step.
+     */
+    @Test
+    public void visitScenarioTest9(){
+
+        internalActors.add("intActor1");
+        externalActors.add("extActor1");
+        for(int i=0; i<3; i++){
+            listOfSubsteps.add(new Step(("intActor1 substep" + i + "for testing"), null));
+        }
+        for(int i=0; i<3; i++){
+            listOfSubsteps.add(new Step(("extActor1 substep" + i + "for testing"), null));
+        }
+        listOfSubsteps.add(new Step(("wrongActor error step 1"), null));
+        listOfSubsteps.add(new Step(("noActor error step 2"), null));
+        listOfSubsteps.add(new Step(("actor99 error step 3"), null));
+        listOfSubsteps.add(new Step(("actor77 error step 4"), null));
+
+        listOfSteps.add(new Step("actor12345 main step", listOfSubsteps));
+        actorCheckingVisitor.visit(scenario);
+
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+        expectedListOfWrongSteps.add(new Step(("actor12345 main step"), listOfSubsteps));
+        expectedListOfWrongSteps.add(new Step(("wrongActor error step 1"), null));
+        expectedListOfWrongSteps.add(new Step(("noActor error step 2"), null));
+        expectedListOfWrongSteps.add(new Step(("actor99 error step 3"), null));
+        expectedListOfWrongSteps.add(new Step(("actor77 error step 4"), null));
+
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+
+
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Case: 5 errors, WITH KEYWORDS, 1 external actors, 1 internal actor
+     * The expected list of wrong steps has five step.
+     */
+    @Test
+    public void visitScenarioTest10(){
+
+        internalActors.add("intActor1");
+        externalActors.add("extActor1");
+
+        listOfSubsteps.add(new Step(("FOR EACH: substep 1 for testing"), null));
+        listOfSubsteps.add(new Step(("intActor1 substep 2 for testing"), null));
+        listOfSubsteps.add(new Step(("IF: wrongActor error step 1"), null));
+        listOfSubsteps.add(new Step(("ELSE: error step 2"), null));
+        listOfSubsteps.add(new Step(("IF: noActor error step 3"), null));
+        listOfSubsteps.add(new Step(("actor99 error step 4"), null));
+        listOfSubsteps.add(new Step(("ELSE: actor77 error step 5"), null));
+
+        listOfSteps.add(new Step("extActor1 main step", listOfSubsteps));
+        actorCheckingVisitor.visit(scenario);
+
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+        expectedListOfWrongSteps.add(new Step(("IF: wrongActor error step 1"), null));
+        expectedListOfWrongSteps.add(new Step(("ELSE: error step 2"), null));
+        expectedListOfWrongSteps.add(new Step(("IF: noActor error step 3"), null));
+        expectedListOfWrongSteps.add(new Step(("actor99 error step 4"), null));
+        expectedListOfWrongSteps.add(new Step(("ELSE: actor77 error step 5"), null));
+
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+
 
 
 }
