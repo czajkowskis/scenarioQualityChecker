@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test class for CountAllStepsVisitor.
@@ -78,6 +79,68 @@ class CountAllStepsVisitorTest {
             String stepName = i + "step to test FiveStepScenario";
             listOfSteps.add(new Step(stepName, null));
         }
+
+        allStepsVisitor.visit(scenario);
+        int expectedNumberOfSteps = 5;
+        int actualNumberOfSteps = allStepsVisitor.getNumberOfSteps();
+        assertEquals(expectedNumberOfSteps, actualNumberOfSteps);
+
+    }
+
+
+    /**
+     * Tests the visit method of the CountAllStepsVisitor with an empty scenario.
+     * Creates scenario using mock object.
+     * The expected number of steps is 0.
+     */
+    @Test
+    public void visitEmptyScenarioMockTest(){
+
+        scenario = mock(Scenario.class);
+        when(scenario.steps()).thenReturn(new ArrayList<>());
+
+        allStepsVisitor.visit(scenario);
+        int expectedNumberOfSteps = 0;
+        int actualNumberOfSteps = allStepsVisitor.getNumberOfSteps();
+        assertEquals(expectedNumberOfSteps, actualNumberOfSteps);
+
+    }
+
+    /**
+     * Tests the visit method of the CountAllStepsVisitor with a scenario containing one step.
+     * Creates scenario using mock object.
+     * The expected number of steps is 1.
+     */
+    @Test
+    public void visitOneStepScenarioMockTest(){
+
+        listOfSteps.add(new Step("Step to test OneStep Scenario", null));
+
+        scenario = mock(Scenario.class);
+        when(scenario.steps()).thenReturn(listOfSteps);
+
+        allStepsVisitor.visit(scenario);
+        int expectedNumberOfSteps = 1;
+        int actualNumberOfSteps = allStepsVisitor.getNumberOfSteps();
+        assertEquals(expectedNumberOfSteps, actualNumberOfSteps);
+
+    }
+
+    /**
+     * Tests the visit method of the CountAllStepsVisitor with a scenario containing five steps.
+     * Creates scenario using mock object.
+     * The expected number of steps is 5.
+     */
+    @Test
+    public void visitFiveStepScenarioMockTest(){
+
+        for (int i=0; i<5; i++){
+            String stepName = i + "step to test FiveStepScenario";
+            listOfSteps.add(new Step(stepName, null));
+        }
+
+        scenario = mock(Scenario.class);
+        when(scenario.steps()).thenReturn(listOfSteps);
 
         allStepsVisitor.visit(scenario);
         int expectedNumberOfSteps = 5;
