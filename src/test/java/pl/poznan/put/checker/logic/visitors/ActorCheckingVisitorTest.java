@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -314,5 +315,81 @@ class ActorCheckingVisitorTest {
     }
 
 
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Creates scenario using mock object.
+     * Case: 3 errors, WITH KEYWORDS, 2 external actors, 2 internal actor
+     * The expected list of wrong steps has three step.
+     */
+    @Test
+    public void visitScenarioMockTest1(){
 
+        internalActors.add("intActor1");
+        externalActors.add("extActor1");
+        internalActors.add("intActor2");
+        externalActors.add("extActor2");
+
+        listOfSubsteps.add(new Step(("FOR EACH: substep 1 for testing"), null));
+        listOfSubsteps.add(new Step(("intActor1 substep 2 for testing"), null));
+        listOfSubsteps.add(new Step(("IF: wrongActor error step 1"), null));
+        listOfSubsteps.add(new Step(("ELSE: actor12345 step 2"), null));
+        listOfSubsteps.add(new Step(("IF: noActor error step 3"), null));
+
+        listOfSteps.add(new Step("extActor1 main step", listOfSubsteps));
+
+        scenario = mock(Scenario.class);
+        when(scenario.externalActors()).thenReturn(externalActors);
+        when(scenario.internalActors()).thenReturn(internalActors);
+        when(scenario.steps()).thenReturn(listOfSteps);
+
+        actorCheckingVisitor.visit(scenario);
+
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+        expectedListOfWrongSteps.add(new Step(("IF: wrongActor error step 1"), null));
+        expectedListOfWrongSteps.add(new Step(("ELSE: actor12345 step 2"), null));
+        expectedListOfWrongSteps.add(new Step(("IF: noActor error step 3"), null));
+
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+
+    /**
+     * Tests the visit method of the ActorCheckingVisitor.
+     * Tests if steps starting with wrong actors are correctly identified.
+     * Creates scenario using mock object.
+     * Case: 0 error, no KEYWORDS, 2 external actors, 2 internal actor
+     * The expected list of wrong steps is empty.
+     */
+    @Test
+    public void visitScenarioMockTest2(){
+
+        internalActors.add("intActor1");
+        externalActors.add("extActor1");
+        internalActors.add("intActor2");
+        externalActors.add("extActor2");
+
+        listOfSubsteps.add(new Step(("intActor1 substep 1 for testing"), null));
+        listOfSubsteps.add(new Step(("intActor1 substep 2 for testing"), null));
+        listOfSubsteps.add(new Step(("extActor2 error step 1"), null));
+        listOfSubsteps.add(new Step(("intActor2 step 2"), null));
+        listOfSubsteps.add(new Step(("extActor2 error step 3"), null));
+
+        listOfSteps.add(new Step("extActor1 main step", listOfSubsteps));
+
+        scenario = mock(Scenario.class);
+        when(scenario.externalActors()).thenReturn(externalActors);
+        when(scenario.internalActors()).thenReturn(internalActors);
+        when(scenario.steps()).thenReturn(listOfSteps);
+
+        actorCheckingVisitor.visit(scenario);
+
+        List<Step> expectedListOfWrongSteps = new ArrayList<>();
+
+        List<Step> actualListOfWrongSteps = actorCheckingVisitor.getStepsWithoutActor();
+        assertEquals(expectedListOfWrongSteps, actualListOfWrongSteps);
+
+    }
+    
 }
