@@ -16,17 +16,23 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CountAllStepsVisitorTest {
 
-    private List<Step> listOfSteps = new ArrayList<>();
+    private List<Step> listOfSteps;
     private Scenario scenario;
-    private List<String> externalActors = new ArrayList<>(Arrays.asList("extActor1", "extActor2"));
-    private List<String> internalActors = new ArrayList<>(Arrays.asList("intActor1", "intActor2"));
+    private List<String> externalActors;
+    private List<String> internalActors;
     private CountAllStepsVisitor allStepsVisitor;
 
     /**
-     * Sets up the test environment by initializing the scenario and the visitor.
+     * Sets up the test environment by initializing listOfSteps,
+     * external and internal actors, the scenario and the visitor.
      */
     @BeforeEach
     public void setUp(){
+
+        listOfSteps = new ArrayList<>();
+        externalActors = new ArrayList<>(Arrays.asList("extActor1", "extActor2"));
+        internalActors = new ArrayList<>(Arrays.asList("intActor1", "intActor2"));
+
         scenario = new Scenario("Scenario title", externalActors, internalActors, listOfSteps);
         allStepsVisitor = new CountAllStepsVisitor();
     }
