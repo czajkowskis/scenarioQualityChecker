@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import pl.poznan.put.checker.logic.Scenario;
 import pl.poznan.put.checker.logic.Step;
-import pl.poznan.put.checker.logic.visitors.ActorCheckingVisitor;
-import pl.poznan.put.checker.logic.visitors.CountAllStepsVisitor;
-import pl.poznan.put.checker.logic.visitors.CountKeywordStepsVisitor;
-import pl.poznan.put.checker.logic.visitors.ScenarioFilterVisitor;
+import pl.poznan.put.checker.logic.visitors.*;
 
 import java.util.List;
 
@@ -94,4 +91,15 @@ public class ScenarioQualityCheckerController {
         logger.info("Sending filter-scenario response: {}", filteredScenario);
         return filteredScenario;
     }
+
+    @PostMapping(path = "numerate-steps", produces = "application/json")
+    public Response<String> numerateSteps(@RequestBody Scenario scenario) {
+        logger.info("Received numerate-steps request: {}", scenario);
+        StepNumeratorVisitor visitor = new StepNumeratorVisitor();
+        visitor.visit(scenario);
+        Response<String> numeratedSteps = new Response<>("numerate-steps", visitor.getNumeratedStepsAsString());
+        logger.info("Sending numerate-steps response: {}", numeratedSteps);
+        return numeratedSteps;
+    }
+
 }
