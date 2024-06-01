@@ -7,6 +7,7 @@ import pl.poznan.put.checker.logic.Scenario;
 import pl.poznan.put.checker.logic.Step;
 import pl.poznan.put.checker.logic.visitors.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /***
@@ -100,6 +101,16 @@ public class ScenarioQualityCheckerController {
         Response<String> numeratedSteps = new Response<>("numerate-steps", visitor.getNumeratedStepsAsString());
         logger.info("Sending numerate-steps response: {}", numeratedSteps);
         return numeratedSteps;
+    }
+
+    @PostMapping(path = "search-expr", produces = "application/json")
+    public Response<List<Step>> searchExpression(@RequestBody Scenario scenario, @RequestParam String expression) {
+        logger.info("Received search-expr request: {}", scenario);
+        SearchVisitor visitor = new SearchVisitor(expression);
+        visitor.visit(scenario);
+        Response<List<Step>> foundSteps = new Response<>("search-expr", visitor.getFoundSteps());
+        logger.info("Sending search-expr response: {}", foundSteps);
+        return foundSteps;
     }
 
 }
